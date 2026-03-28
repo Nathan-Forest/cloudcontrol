@@ -37,14 +37,7 @@ export default function Home() {
                 className="object-contain brightness-0 invert"
               />
             </div>
-          </div>
-          <h1 className="text-6xl font-bold text-white mb-4">
-            THE FOREST DEN
-          </h1>
-          <p className="text-xl text-slate-300 mb-2 tracking-wider">
-            WHERE CODE GROWS WILD
-          </p>
-          
+          </div>     
           <div className="mt-8">
             <h2 className="text-2xl text-slate-300 mb-2">
               Nathan Forest - Software Engineer
@@ -109,30 +102,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="flex justify-center gap-4">
-          
-            href="/projects"
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
-          >
-            View Projects
-          </a>
-          
-            href="/tools"
-            className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition"
-          >
-            Daily Tools
-          </a>
-        </div>
 
-        {/* Debug info (remove in production) */}
-        {error && (
-          <div className="mt-8 p-4 bg-red-900/20 border border-red-700 rounded-lg text-center">
-            <p className="text-red-400 text-sm">
-              ⚠️ Error connecting to PulseMonitor: {error}
-            </p>
-          </div>
-        )}
+        
+        
       </div>
     </div>
   );
