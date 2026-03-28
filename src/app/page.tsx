@@ -1,18 +1,35 @@
-import Image from 'next/image';
+'use client';
+
 import { Activity, Code2, Rocket, TrendingUp } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { usePulseMonitor } from '@/hooks/usePulseMonitor';
+import Image from 'next/image';
 
 export default function Home() {
+  const { data, loading, error } = usePulseMonitor();
+
+  // Calculate stats from PulseMonitor data
+  const stats = {
+    appsDeployed: data?.data?.apps?.length || 7,
+    uptime: data?.data?.apps?.filter(app => app.status === 'healthy').length || 0,
+    languages: 5,
+    pulseMonitorStatus: data?.success ? 'Live' : 'Offline',
+  };
+
+  // Calculate uptime percentage
+  const uptimePercentage = stats.appsDeployed > 0 
+    ? ((stats.uptime / stats.appsDeployed) * 100).toFixed(1)
+    : '99.9';
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          {/* Large Logo with Glow */}
-          <div className="mb-6 relative">
-            <div className="absolute inset-0 bg-blue-500/10 blur-3xl" />
-            <div className="relative w-102 h-102 mx-auto mb-4">
+          {/* Large Logo */}
+          <div className="mb-6">
+            <div className="relative w-48 h-48 mx-auto mb-4">
               <Image
                 src="/images/logo.png"
                 alt="The Forest Den"
@@ -21,40 +38,53 @@ export default function Home() {
               />
             </div>
           </div>
-          <p className="text-2xl text-slate-300 mb-2">
-            Nathan Forest - Software Engineer
+          <h1 className="text-6xl font-bold text-white mb-4">
+            THE FOREST DEN
+          </h1>
+          <p className="text-xl text-slate-300 mb-2 tracking-wider">
+            WHERE CODE GROWS WILD
           </p>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Building production-grade applications with modern technologies.
-            From IT Support to Full-Stack Development.
-          </p>
+          
+          <div className="mt-8">
+            <h2 className="text-2xl text-slate-300 mb-2">
+              Nathan Forest - Software Engineer
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Building production-grade applications with modern technologies.
+              From IT Support to Full-Stack Development.
+            </p>
+          </div>
         </div>
 
         {/* Live Stats Ticker */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-          <StatCard
+          <StatCard 
             icon={<Code2 className="w-8 h-8" />}
-            value="7"
+            value={stats.appsDeployed.toString()}
             label="Apps Deployed"
             color="text-blue-500"
+            loading={loading}
           />
-          <StatCard
+          <StatCard 
             icon={<Rocket className="w-8 h-8" />}
-            value="99.9%"
+            value={`${uptimePercentage}%`}
             label="Uptime"
             color="text-green-500"
+            loading={loading}
           />
-          <StatCard
+          <StatCard 
             icon={<TrendingUp className="w-8 h-8" />}
-            value="5"
+            value={stats.languages.toString()}
             label="Languages"
             color="text-purple-500"
           />
-          <StatCard
+          <StatCard 
             icon={<Activity className="w-8 h-8" />}
-            value="Live"
+            value={stats.pulseMonitorStatus}
             label="PulseMonitor"
-            color="text-emerald-500"
+            color={data?.success ? "text-emerald-500" : "text-red-500"}
+            loading={loading}
+            pulse={data?.success}
           />
         </div>
 
@@ -81,46 +111,67 @@ export default function Home() {
 
         {/* Quick Links */}
         <div className="flex justify-center gap-4">
-
-          href="/projects"
-          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
-          <a>
+          
+            href="/projects"
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
+          >
             View Projects
           </a>
-
-          href="/tools"
-          className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition"
-          <a>
+          
+            href="/tools"
+            className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition"
+          >
             Daily Tools
           </a>
         </div>
+
+        {/* Debug info (remove in production) */}
+        {error && (
+          <div className="mt-8 p-4 bg-red-900/20 border border-red-700 rounded-lg text-center">
+            <p className="text-red-400 text-sm">
+              ⚠️ Error connecting to PulseMonitor: {error}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
 // Stat Card Component
-function StatCard({ icon, value, label, color }: {
+function StatCard({ 
+  icon, 
+  value, 
+  label, 
+  color,
+  loading = false,
+  pulse = false,
+}: {
   icon: React.ReactNode;
   value: string;
   label: string;
   color: string;
+  loading?: boolean;
+  pulse?: boolean;
 }) {
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <CardContent className="pt-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className={`text-3xl font-bold ${color}`}>{value}</p>
+            <p className={`text-3xl font-bold ${color} ${loading ? 'animate-pulse' : ''}`}>
+              {loading ? '...' : value}
+            </p>
             <p className="text-slate-400 text-sm">{label}</p>
           </div>
-          <div className={color}>{icon}</div>
+          <div className={`${color} ${pulse ? 'animate-pulse' : ''}`}>
+            {icon}
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 }
-
 
 // Tech Badge Component
 export function TechBadge({ children }: { children: React.ReactNode }) {
