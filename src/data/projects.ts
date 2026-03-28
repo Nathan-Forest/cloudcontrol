@@ -11,9 +11,9 @@ export interface Project {
 }
 
 export type TechStack = 
-  | 'TypeScript' | 'Python' | 'C#'
-  | 'Next.js' | 'React' | 'FastAPI' | 'Flask' | '.NET'
-  | 'Docker' | 'Nginx' | 'SQLite' | 'PostgreSQL';
+  | 'TypeScript' | 'JavaScript' | 'Python' | 'C#'  // Languages
+  | 'Next.js' | 'React' | 'FastAPI' | 'Flask' | '.NET'  // Frameworks
+  | 'Docker' | 'Nginx' | 'SQLite' | 'PostgreSQL';  // Tools
 
 export const projects: Project[] = [
   {
@@ -22,7 +22,7 @@ export const projects: Project[] = [
     description: 'Real-time application health monitoring service',
     url: 'http://192.168.50.160:5173',
     githubUrl: 'https://github.com/Nathan-Forest/PulseMonitor',
-    techStack: ['Python', 'FastAPI', 'React', 'Docker'],
+    techStack: ['Python', 'TypeScript', 'FastAPI', 'React', 'Docker'],
     pulseMonitorName: 'PulseMonitor API',
     port: 8000,
     category: 'monitoring',
@@ -44,7 +44,7 @@ export const projects: Project[] = [
     description: 'Portfolio tracking and stock management application',
     url: 'http://192.168.50.160:5001',
     githubUrl: 'https://github.com/Nathan-Forest/StockTracker',
-    techStack: ['Python', 'Flask', 'SQLite', 'Docker'],
+    techStack: ['Python', 'JavaScript', 'Flask', 'SQLite', 'Docker'],
     pulseMonitorName: 'StockTracker',
     port: 5001,
     category: 'finance',
@@ -55,7 +55,7 @@ export const projects: Project[] = [
     description: 'Financial management and tracking platform',
     url: 'http://192.168.50.160:5002',
     githubUrl: 'https://github.com/Nathan-Forest/FinanceHub',
-    techStack: ['C#', '.NET', 'SQLite', 'Docker'],
+    techStack: ['C#', '.NET', "JavaScript", 'SQLite', 'Docker'],
     pulseMonitorName: 'FinanceHub',
     port: 5002,
     category: 'finance',

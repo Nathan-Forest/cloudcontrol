@@ -4,7 +4,9 @@ import { Activity, Code2, Rocket, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { usePulseMonitor } from '@/hooks/usePulseMonitor';
+import { getLanguageCount } from '@/lib/languageStats';
 import Image from 'next/image';
+import { LanguageBreakdown } from '@/components/LanguageBreakdown';
 
 export default function Home() {
   const { data, loading, error } = usePulseMonitor();
@@ -13,20 +15,20 @@ export default function Home() {
   const stats = {
     appsDeployed: data?.data?.apps?.length || 7,
     uptime: data?.data?.apps?.filter(app => app.status === 'healthy').length || 0,
-    languages: 5,
+    languages: getLanguageCount(),
     pulseMonitorStatus: data?.success ? 'Live' : 'Offline',
   };
 
   // Calculate uptime percentage
-  const uptimePercentage = stats.appsDeployed > 0 
+  const uptimePercentage = stats.appsDeployed > 0
     ? ((stats.uptime / stats.appsDeployed) * 100).toFixed(1)
     : '99.9';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="text-center mb-16">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-5">
           {/* Large Logo */}
           <div className="mb-6">
             <div className="relative w-102 h-102 mx-auto mb-4">
@@ -37,33 +39,33 @@ export default function Home() {
                 className="object-contain brightness-0 invert"
               />
             </div>
-          </div>     
+          </div>
 
         </div>
 
         {/* Live Stats Ticker */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-          <StatCard 
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+          <StatCard
             icon={<Code2 className="w-8 h-8" />}
             value={stats.appsDeployed.toString()}
             label="Apps Deployed"
             color="text-blue-500"
             loading={loading}
           />
-          <StatCard 
+          <StatCard
             icon={<Rocket className="w-8 h-8" />}
             value={`${uptimePercentage}%`}
             label="Uptime"
             color="text-green-500"
             loading={loading}
           />
-          <StatCard 
+          <StatCard
             icon={<TrendingUp className="w-8 h-8" />}
             value={stats.languages.toString()}
             label="Languages"
             color="text-purple-500"
           />
-          <StatCard 
+          <StatCard
             icon={<Activity className="w-8 h-8" />}
             value={stats.pulseMonitorStatus}
             label="PulseMonitor"
@@ -72,9 +74,15 @@ export default function Home() {
             pulse={data?.success}
           />
         </div>
+
+
         {/* About Me */}
-         <div className="text-center mb-16">
-          <div className="mt-8">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-30">
+          <div className="w-156 h-16">
+            <LanguageBreakdown />
+          </div>
+          <div className="text-center mb-16">
             <h2 className="text-2xl text-slate-300 mb-2">
               Nathan Forest - Software Engineer
             </h2>
@@ -83,11 +91,12 @@ export default function Home() {
               From IT Support to Full-Stack Development.
             </p>
           </div>
-          
+        </div>
+
         {/* Tech Stack */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white text-center mb-8">
-            
+
           </h2>
           <div className="flex flex-wrap justify-center gap-3">
             <TechBadge>TypeScript</TechBadge>
@@ -104,20 +113,20 @@ export default function Home() {
             <TechBadge>Linux</TechBadge>
           </div>
         </div>
-</div>
 
-        
-        
+
+
+
       </div>
     </div>
   );
 }
 
 // Stat Card Component
-function StatCard({ 
-  icon, 
-  value, 
-  label, 
+function StatCard({
+  icon,
+  value,
+  label,
   color,
   loading = false,
   pulse = false,
