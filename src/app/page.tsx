@@ -1,19 +1,26 @@
+import Image from 'next/image';
 import { Activity, Code2, Rocket, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-/*import { Badge } from '@/components/ui/badge';*/
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16">
-          <div className="mb-4">
-            <Activity className="w-16 h-16 text-blue-500 mx-auto animate-pulse" />
+          {/* Large Logo with Glow */}
+          <div className="mb-6 relative">
+            <div className="absolute inset-0 bg-blue-500/10 blur-3xl" />
+            <div className="relative w-102 h-102 mx-auto mb-4">
+              <Image
+                src="/images/logo.png"
+                alt="The Forest Den"
+                fill
+                className="object-contain brightness-0 invert"
+              />
+            </div>
           </div>
-          <h1 className="text-6xl font-bold text-white mb-4">
-            The Forest Den
-          </h1>
           <p className="text-2xl text-slate-300 mb-2">
             Nathan Forest - Software Engineer
           </p>
@@ -25,25 +32,25 @@ export default function Home() {
 
         {/* Live Stats Ticker */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-          <StatCard 
+          <StatCard
             icon={<Code2 className="w-8 h-8" />}
             value="7"
             label="Apps Deployed"
             color="text-blue-500"
           />
-          <StatCard 
+          <StatCard
             icon={<Rocket className="w-8 h-8" />}
             value="99.9%"
             label="Uptime"
             color="text-green-500"
           />
-          <StatCard 
+          <StatCard
             icon={<TrendingUp className="w-8 h-8" />}
             value="5"
             label="Languages"
             color="text-purple-500"
           />
-          <StatCard 
+          <StatCard
             icon={<Activity className="w-8 h-8" />}
             value="Live"
             label="PulseMonitor"
@@ -74,15 +81,15 @@ export default function Home() {
 
         {/* Quick Links */}
         <div className="flex justify-center gap-4">
-          
-            href="/projects"
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
+
+          href="/projects"
+          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
           <a>
             View Projects
           </a>
-          
-            href="/tools"
-            className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition"
+
+          href="/tools"
+          className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition"
           <a>
             Daily Tools
           </a>
@@ -114,8 +121,9 @@ function StatCard({ icon, value, label, color }: {
   );
 }
 
+
 // Tech Badge Component
-function TechBadge({ children }: { children: React.ReactNode }) {
+export function TechBadge({ children }: { children: React.ReactNode }) {
   return (
     <Badge className="px-4 py-2 bg-slate-800 text-slate-200 hover:bg-slate-700">
       {children}
