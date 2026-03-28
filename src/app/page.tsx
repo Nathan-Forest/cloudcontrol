@@ -29,7 +29,7 @@ export default function Home() {
         <div className="text-center mb-16">
           {/* Large Logo */}
           <div className="mb-6">
-            <div className="relative w-48 h-48 mx-auto mb-4">
+            <div className="relative w-102 h-102 mx-auto mb-4">
               <Image
                 src="/images/logo.png"
                 alt="The Forest Den"
@@ -38,15 +38,7 @@ export default function Home() {
               />
             </div>
           </div>     
-          <div className="mt-8">
-            <h2 className="text-2xl text-slate-300 mb-2">
-              Nathan Forest - Software Engineer
-            </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Building production-grade applications with modern technologies.
-              From IT Support to Full-Stack Development.
-            </p>
-          </div>
+
         </div>
 
         {/* Live Stats Ticker */}
@@ -80,11 +72,22 @@ export default function Home() {
             pulse={data?.success}
           />
         </div>
-
+        {/* About Me */}
+         <div className="text-center mb-16">
+          <div className="mt-8">
+            <h2 className="text-2xl text-slate-300 mb-2">
+              Nathan Forest - Software Engineer
+            </h2>
+            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
+              Building production-grade applications with modern technologies.
+              From IT Support to Full-Stack Development.
+            </p>
+          </div>
+          
         {/* Tech Stack */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white text-center mb-8">
-            Tech Stack
+            
           </h2>
           <div className="flex flex-wrap justify-center gap-3">
             <TechBadge>TypeScript</TechBadge>
@@ -101,7 +104,7 @@ export default function Home() {
             <TechBadge>Linux</TechBadge>
           </div>
         </div>
-
+</div>
 
         
         
