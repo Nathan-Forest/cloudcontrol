@@ -125,10 +125,19 @@ export default function HabitsPage() {
       setCompleting(null);
     }
   };
+// Change the form onSubmit
+<form
+  onSubmit={(e) => {
+    console.log('Form submitted');
+    handleCreate(e);
+  }}
+  className="bg-gray-900/60 border border-green-900/40 rounded-xl p-6 mb-6"
+>
 
-const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+</form>
+const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
   e.preventDefault();
-  setSaving(true);
+  console.log('handleCreate called, token:', token ? 'exists' : 'null');
   try {
     const response = await fetch('/api/lifeos/habits', {
       method: 'POST',
