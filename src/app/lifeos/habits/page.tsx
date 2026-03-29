@@ -79,25 +79,31 @@ export default function HabitsPage() {
     if (!isAuthenticated) router.push('/lifeos/login');
   }, [isAuthenticated, router]);
 
-  const authHeaders = {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
-  };
 
   const fetchHabits = async () => {
-    try {
-      const [habitsRes, todayRes] = await Promise.all([
-        fetch('/api/lifeos/habits', { headers: authHeaders }),
-        fetch('/api/lifeos/habits/today', { headers: authHeaders }),
-      ]);
-      if (habitsRes.ok) setHabits((await habitsRes.json()).data || []);
-      if (todayRes.ok) setTodayHabits((await todayRes.json()).data || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const [habitsRes, todayRes] = await Promise.all([
+      fetch('/api/lifeos/habits', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }),
+      fetch('/api/lifeos/habits/today', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }),
+    ]);
+    if (habitsRes.ok) setHabits((await habitsRes.json()).data || []);
+    if (todayRes.ok) setTodayHabits((await todayRes.json()).data || []);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     if (token) fetchHabits();
@@ -116,25 +122,36 @@ export default function HabitsPage() {
     }
   };
 
-  const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSaving(true);
-    try {
-      await fetch('/api/lifeos/habits', {
-        method: 'POST',
-        headers: authHeaders,
-        body: JSON.stringify({ name, frequency, targetCount, color, isActive: true }),
-      });
-      setName('');
-      setFrequency('daily');
-      setTargetCount(1);
-      setColor(COLORS[0]);
-      setShowForm(false);
-      await fetchHabits();
-    } finally {
-      setSaving(false);
+const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setSaving(true);
+  try {
+    const response = await fetch('/api/lifeos/habits', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, frequency, targetCount, color, isActive: true }),
+    });
+    
+    if (!response.ok) {
+      console.error('POST failed:', response.status);
+      return;
     }
-  };
+    
+    setName('');
+    setFrequency('daily');
+    setTargetCount(1);
+    setColor(COLORS[0]);
+    setShowForm(false);
+    await fetchHabits();
+  } catch(err) {
+    console.error('Create habit error:', err);
+  } finally {
+    setSaving(false);
+  }
+};
 
   const completedCount = todayHabits.filter(h => h.isDone).length;
 
