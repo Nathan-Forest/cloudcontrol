@@ -31,7 +31,7 @@ export default function Home() {
         <div className="text-center mb-5">
           {/* Large Logo */}
           <div className="mb-6">
-            <div className="relative w-102 h-102 mx-auto mb-4">
+            <div className="relative w-92 h-92 mx-auto mb-4">
               <Image
                 src="/images/logo.png"
                 alt="The Forest Den"
