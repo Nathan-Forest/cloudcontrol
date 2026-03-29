@@ -59,7 +59,7 @@ function getStreakCount(completions: Completion[]): number {
 }
 
 export default function HabitsPage() {
-  const { token, isAuthenticated } = useAuth();
+  const { token, isAuthenticated, authLoading  } = useAuth();
   const router = useRouter();
 
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -76,8 +76,13 @@ export default function HabitsPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) router.push('/lifeos/login');
-  }, [isAuthenticated, router]);
+    if (authLoading) return;
+    if (!isAuthenticated) {
+    router.push('/lifeos/login');
+    return;
+  }
+    fetchHabits();
+  }, [authLoading, isAuthenticated]);
 
   const authHeaders = {
     'Authorization': `Bearer ${token}`,

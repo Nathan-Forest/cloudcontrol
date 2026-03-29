@@ -13,6 +13,7 @@ interface AuthContextType {
   token: string | null;
   user: User | null;
   isAuthenticated: boolean;
+  authLoading: boolean; 
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   // On mount — restore token and user from localStorage
   useEffect(() => {
@@ -29,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const storedUser = localStorage.getItem('lifeos_user');
     if (stored) setToken(stored);
     if (storedUser) setUser(JSON.parse(storedUser));
+    setAuthLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -64,6 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       user,
       isAuthenticated: !!token,
+      authLoading,
       login,
       logout,
     }}>
