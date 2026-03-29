@@ -85,29 +85,29 @@ export default function HabitsPage() {
   };
 
   const fetchHabits = async () => {
-  try {
-    const [habitsRes, todayRes] = await Promise.all([
-      fetch('/api/lifeos/habits', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        }
-      }),
-      fetch('/api/lifeos/habits/today', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        }
-      }),
-    ]);
-    if (habitsRes.ok) setHabits((await habitsRes.json()).data || []);
-    if (todayRes.ok) setTodayHabits((await todayRes.json()).data || []);
-  } catch (err) {
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const [habitsRes, todayRes] = await Promise.all([
+        fetch('/api/lifeos/habits', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }),
+        fetch('/api/lifeos/habits/today', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }),
+      ]);
+      if (habitsRes.ok) setHabits((await habitsRes.json()).data || []);
+      if (todayRes.ok) setTodayHabits((await todayRes.json()).data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (token) fetchHabits();
@@ -125,20 +125,22 @@ export default function HabitsPage() {
       setCompleting(null);
     }
   };
-// Change the form onSubmit
-<form
-  onSubmit={(e) => {
-    console.log('Form submitted');
-    handleCreate(e);
-  }}
-  className="bg-gray-900/60 border border-green-900/40 rounded-xl p-6 mb-6"
->
+  // Change the form onSubmit
+  <form
+    onSubmit={(e) => {
+      console.log('Form submitted');
+      handleCreate(e);
+    }}
+    className="bg-gray-900/60 border border-green-900/40 rounded-xl p-6 mb-6"
+  >
 
-</form>
+  </form>
 const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
   e.preventDefault();
   console.log('handleCreate called, token:', token ? 'exists' : 'null');
+  setSaving(true);
   try {
+    console.log('About to fetch...');
     const response = await fetch('/api/lifeos/habits', {
       method: 'POST',
       headers: {
@@ -147,12 +149,16 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
       },
       body: JSON.stringify({ name, frequency, targetCount, color, isActive: true }),
     });
-    
+    console.log('Response status:', response.status);
+    console.log('Response ok:', response.ok);
+    const responseBody = await response.json();
+    console.log('Response body:', responseBody);
+
     if (!response.ok) {
-      console.error('POST failed:', response.status);
+      console.error('POST failed:', response.status, responseBody);
       return;
     }
-    
+
     setName('');
     setFrequency('daily');
     setTargetCount(1);
@@ -165,7 +171,6 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
     setSaving(false);
   }
 };
-
   const completedCount = todayHabits.filter(h => h.isDone).length;
 
   if (!isAuthenticated) return null;
@@ -186,7 +191,7 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
             onClick={() => setShowForm(!showForm)}
             className="flex items-center gap-2 bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
-            {showForm ? <X className="h-4 w-4"/> : <Plus className="h-4 w-4"/>}
+            {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             {showForm ? 'Cancel' : 'New habit'}
           </button>
         </div>
@@ -276,8 +281,8 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
           <h2 className="text-white font-semibold mb-4">Today</h2>
           {loading ? (
             <div className="space-y-3">
-              {[1,2,3].map(i => (
-                <div key={i} className="animate-pulse h-14 bg-gray-800 rounded-lg"/>
+              {[1, 2, 3].map(i => (
+                <div key={i} className="animate-pulse h-14 bg-gray-800 rounded-lg" />
               ))}
             </div>
           ) : todayHabits.length === 0 ? (
@@ -292,11 +297,10 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
                 return (
                   <div
                     key={habit.id}
-                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${
-                      habit.isDone
+                    className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${habit.isDone
                         ? 'bg-green-900/10 border-green-900/30'
                         : 'bg-gray-800/40 border-gray-700/30 hover:border-gray-600/50'
-                    }`}
+                      }`}
                   >
                     <div
                       className="w-3 h-3 rounded-full flex-shrink-0"
@@ -308,7 +312,7 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
                       </span>
                       {streak > 1 && (
                         <span className="ml-2 inline-flex items-center gap-0.5 text-xs text-amber-400">
-                          <Flame className="h-3 w-3"/>
+                          <Flame className="h-3 w-3" />
                           {streak} day streak
                         </span>
                       )}
@@ -322,8 +326,8 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
                       className="transition-colors disabled:opacity-50"
                     >
                       {habit.isDone
-                        ? <CheckCircle2 className="h-6 w-6 text-green-500"/>
-                        : <Circle className="h-6 w-6 text-gray-600 hover:text-green-500"/>
+                        ? <CheckCircle2 className="h-6 w-6 text-green-500" />
+                        : <Circle className="h-6 w-6 text-gray-600 hover:text-green-500" />
                       }
                     </button>
                   </div>
@@ -354,7 +358,7 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
                     </p>
                   </div>
                   <button className="text-gray-600 hover:text-green-400 transition-colors">
-                    <Edit2 className="h-4 w-4"/>
+                    <Edit2 className="h-4 w-4" />
                   </button>
                 </div>
               ))}
