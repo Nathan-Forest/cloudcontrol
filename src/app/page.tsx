@@ -28,11 +28,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
       {/* Hero Section */}
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-5">
+      <div className="container mx-auto px-4 pt-24">
+        <div className="text-center mb-2">
           {/* Large Logo */}
-          <div className="mb-6">
-            <div className="relative w-92 h-92 mx-auto mb-4">8
+          <div className="mb-2">
+            <div className="relative w-92 h-92 mx-auto mb-2">8
               <Image
                 src="/images/logo.png"
                 alt="The Forest Den"
