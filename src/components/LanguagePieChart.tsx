@@ -6,14 +6,14 @@ import { getLanguageStats } from '@/lib/languageStats';
 
 export function LanguagePieChart() {
   const stats = getLanguageStats();
-  
+
   const data = stats.map((lang) => ({
     name: lang.name,
     value: lang.count,
     percentage: lang.percentage,
     color: lang.color,
   }));
-  
+
   return (
     <Card className="bg-slate-800/50 border-slate-700">
       <CardHeader>
@@ -36,19 +36,19 @@ export function LanguagePieChart() {
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: '#1e293b', 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#1e293b',
                 border: '1px solid #334155',
                 borderRadius: '8px',
                 color: '#fff'
               }}
-              formatter={(value: number, name: string, props: any) => [
-                `${value} project${value !== 1 ? 's' : ''} (${props.payload.percentage.toFixed(1)}%)`,
+              formatter={(value, name, props) => [
+                `${value} project${Number(value) !== 1 ? 's' : ''} (${((props.payload.percent ?? 0) * 100).toFixed(1)}%)`,
                 name
               ]}
             />
-            <Legend 
+            <Legend
               wrapperStyle={{ color: '#cbd5e1' }}
               iconType="circle"
             />
