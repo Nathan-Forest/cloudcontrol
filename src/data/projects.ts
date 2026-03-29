@@ -10,7 +10,7 @@ export interface Project {
   category: 'monitoring' | 'finance' | 'platform' | 'web';
 }
 
-export type TechStack = 
+export type TechStack =
   | 'TypeScript' | 'JavaScript' | 'Python' | 'C#'  // Languages
   | 'Next.js' | 'React' | 'FastAPI' | 'Flask' | '.NET'  // Frameworks
   | 'Docker' | 'Nginx' | 'SQLite' | 'PostgreSQL';  // Tools
@@ -39,9 +39,20 @@ export const projects: Project[] = [
     category: 'platform',
   },
   {
+    id: 'secureauth-lite',
+    name: 'SecureAuth-Lite',
+    description: 'SQLite variant of SecureAuth demonstrating EF Core database-agnostic design',
+    url: 'http://192.168.50.160:5003',
+    githubUrl: 'https://github.com/Nathan-Forest/SecureAuth-Lite',
+    techStack: ['C#', '.NET', 'TypeScript', 'React', 'SQLite', 'Docker'],
+    pulseMonitorName: 'SecureAuth-Lite',
+    port: 5003,
+    category: 'platform',
+  },
+  {
     id: 'stocktracker',
     name: 'StockTracker',
-    description: 'Portfolio tracking and stock management application',
+    description: 'A full-stack authentication system',
     url: 'http://192.168.50.160:5001',
     githubUrl: 'https://github.com/Nathan-Forest/StockTracker',
     techStack: ['Python', 'JavaScript', 'Flask', 'SQLite', 'Docker'],
