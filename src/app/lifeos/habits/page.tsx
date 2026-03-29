@@ -79,6 +79,10 @@ export default function HabitsPage() {
     if (!isAuthenticated) router.push('/lifeos/login');
   }, [isAuthenticated, router]);
 
+  const authHeaders = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
 
   const fetchHabits = async () => {
   try {
