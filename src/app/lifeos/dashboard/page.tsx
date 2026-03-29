@@ -96,7 +96,7 @@ function priorityColor(priority: string) {
 }
 
 export default function Dashboard() {
-  const { token, user, isAuthenticated,  authLoading  } = useAuth();
+  const { token, user, isAuthenticated, authLoading } = useAuth();
   const router = useRouter();
 
   const [stats, setStats] = useState<LifeOSStats | null>(null);
@@ -126,10 +126,10 @@ export default function Dashboard() {
     const fetchAll = async () => {
       try {
         const [statsRes, habitsRes, goalsRes, tasksRes] = await Promise.all([
-          fetch('/api/lifeos'),
-          fetch('/api/lifeos/habits/today'),
-          fetch('/api/lifeos/goals/active'),
-          fetch('/api/lifeos/tasks/open'),
+          fetch('/api/lifeos', { headers }),
+          fetch('/api/lifeos/habits/today', { headers }),
+          fetch('/api/lifeos/goals/active', { headers }),
+          fetch('/api/lifeos/tasks/open', { headers }),
         ]);
 
         if (statsRes.ok) {
