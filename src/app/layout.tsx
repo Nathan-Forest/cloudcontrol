@@ -10,18 +10,19 @@ export const metadata: Metadata = {
   description: "Building production-grade applications with modern technologies",
 };
 
+import { AuthProvider } from '@/contexts/AuthContext';
+
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-        <main className="pt-16">
+      <body>
+        <AuthProvider>
           {children}
-        </main>
+        </AuthProvider>
       </body>
     </html>
   );
