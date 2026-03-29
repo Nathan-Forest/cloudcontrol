@@ -52,7 +52,7 @@ export const projects: Project[] = [
   {
     id: 'stocktracker',
     name: 'StockTracker',
-    description: 'A full-stack authentication system',
+    description: 'Python Flask stock portfolio tracking application',
     url: 'http://192.168.50.160:5001',
     githubUrl: 'https://github.com/Nathan-Forest/StockTracker',
     techStack: ['Python', 'JavaScript', 'Flask', 'SQLite', 'Docker'],
