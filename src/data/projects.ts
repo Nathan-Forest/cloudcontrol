@@ -71,15 +71,4 @@ export const projects: Project[] = [
     port: 5002,
     category: 'finance',
   },
-  {
-    id: 'nginx',
-    name: 'Nginx',
-    description: 'Reverse proxy and web server',
-    url: 'http://192.168.50.160',
-    githubUrl: '', // No GitHub for Nginx
-    techStack: ['Nginx'],
-    pulseMonitorName: 'Nginx Web Server',
-    port: 80,
-    category: 'web',
-  },
 ];
