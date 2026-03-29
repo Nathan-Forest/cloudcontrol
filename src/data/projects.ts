@@ -23,7 +23,7 @@ export const projects: Project[] = [
     url: 'http://192.168.50.160:8080',
     githubUrl: 'https://github.com/Nathan-Forest/PulseMonitor',
     techStack: ['Python', 'TypeScript', 'FastAPI', 'React', 'Docker'],
-    pulseMonitorName: 'PulseMonitor API',
+    pulseMonitorName: 'PulseMonitor',
     port: 8000,
     category: 'monitoring',
   },
