@@ -125,52 +125,39 @@ export default function HabitsPage() {
       setCompleting(null);
     }
   };
-  // Change the form onSubmit
-  <form
-    onSubmit={(e) => {
-      console.log('Form submitted');
-      handleCreate(e);
-    }}
-    className="bg-gray-900/60 border border-green-900/40 rounded-xl p-6 mb-6"
-  >
 
-  </form>
-const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
-  e.preventDefault();
-  console.log('handleCreate called, token:', token ? 'exists' : 'null');
-  setSaving(true);
-  try {
-    console.log('About to fetch...');
-    const response = await fetch('/api/lifeos/habits', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, frequency, targetCount, color, isActive: true }),
-    });
-    console.log('Response status:', response.status);
-    console.log('Response ok:', response.ok);
-    const responseBody = await response.json();
-    console.log('Response body:', responseBody);
+  const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const response = await fetch('/api/lifeos/habits', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, frequency, targetCount, color, isActive: true }),
+      });
 
-    if (!response.ok) {
-      console.error('POST failed:', response.status, responseBody);
-      return;
+      const responseBody = await response.json();
+
+      if (!response.ok) {
+        console.error('POST failed:', response.status, responseBody);
+        return;
+      }
+
+      setName('');
+      setFrequency('daily');
+      setTargetCount(1);
+      setColor(COLORS[0]);
+      setShowForm(false);
+      await fetchHabits();
+    } catch (err) {
+      console.error('Create habit error:', err);
+    } finally {
+      setSaving(false);
     }
-
-    setName('');
-    setFrequency('daily');
-    setTargetCount(1);
-    setColor(COLORS[0]);
-    setShowForm(false);
-    await fetchHabits();
-  } catch(err) {
-    console.error('Create habit error:', err);
-  } finally {
-    setSaving(false);
-  }
-};
+  };
   const completedCount = todayHabits.filter(h => h.isDone).length;
 
   if (!isAuthenticated) return null;
@@ -298,8 +285,8 @@ const handleCreate = async (e: React.MouseEvent | React.FormEvent) => {
                   <div
                     key={habit.id}
                     className={`flex items-center gap-3 p-4 rounded-xl border transition-all ${habit.isDone
-                        ? 'bg-green-900/10 border-green-900/30'
-                        : 'bg-gray-800/40 border-gray-700/30 hover:border-gray-600/50'
+                      ? 'bg-green-900/10 border-green-900/30'
+                      : 'bg-gray-800/40 border-gray-700/30 hover:border-gray-600/50'
                       }`}
                   >
                     <div

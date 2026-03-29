@@ -22,8 +22,6 @@ export async function POST(request: Request) {
   const token = request.headers.get('Authorization');
   try {
     const body = await request.json();
-    console.log('POST habits - token present:', !!token);
-    console.log('POST habits - body:', body);
     
     const response = await fetch('http://192.168.50.160:5005/api/habits', {
       method: 'POST',
@@ -34,9 +32,7 @@ export async function POST(request: Request) {
       body: JSON.stringify(body),
     });
     
-    console.log('LifeOS response status:', response.status);
     const data = await response.json();
-    console.log('LifeOS response data:', data);
     
     return NextResponse.json({ success: response.ok, data });
   } catch (err) {
