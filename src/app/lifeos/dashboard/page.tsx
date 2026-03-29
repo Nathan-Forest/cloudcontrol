@@ -96,7 +96,7 @@ function priorityColor(priority: string) {
 }
 
 export default function Dashboard() {
-  const { token, user, isAuthenticated } = useAuth();
+  const { token, user, isAuthenticated,  authLoading  } = useAuth();
   const router = useRouter();
 
   const [stats, setStats] = useState<LifeOSStats | null>(null);
@@ -107,10 +107,12 @@ export default function Dashboard() {
 
   // Redirect if not authenticated
   useEffect(() => {
+    if (authLoading) return;
     if (!isAuthenticated) {
       router.push('/lifeos/login');
+      return;
     }
-  }, [isAuthenticated, router]);
+  }, [authLoading, isAuthenticated, router]);
 
   // Fetch all dashboard data
   useEffect(() => {

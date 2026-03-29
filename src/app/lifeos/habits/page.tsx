@@ -59,7 +59,7 @@ function getStreakCount(completions: Completion[]): number {
 }
 
 export default function HabitsPage() {
-  const { token, isAuthenticated, authLoading  } = useAuth();
+  const { token, isAuthenticated, authLoading } = useAuth();
   const router = useRouter();
 
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -78,9 +78,9 @@ export default function HabitsPage() {
   useEffect(() => {
     if (authLoading) return;
     if (!isAuthenticated) {
-    router.push('/lifeos/login');
-    return;
-  }
+      router.push('/lifeos/login');
+      return;
+    }
     fetchHabits();
   }, [authLoading, isAuthenticated]);
 
@@ -90,6 +90,7 @@ export default function HabitsPage() {
   };
 
   const fetchHabits = async () => {
+    console.log('fetchHabits called, token:', token ? token.substring(0, 20) + '...' : 'NULL');
     try {
       const [habitsRes, todayRes] = await Promise.all([
         fetch('/api/lifeos/habits', {
@@ -105,10 +106,20 @@ export default function HabitsPage() {
           }
         }),
       ]);
-      if (habitsRes.ok) setHabits((await habitsRes.json()).data || []);
-      if (todayRes.ok) setTodayHabits((await todayRes.json()).data || []);
+      console.log('habits status:', habitsRes.status);
+      console.log('today status:', todayRes.status);
+      if (habitsRes.ok) {
+        const json = await habitsRes.json();
+        console.log('habits data:', json);
+        setHabits(json.data || []);
+      }
+      if (todayRes.ok) {
+        const json = await todayRes.json();
+        console.log('today data:', json);
+        setTodayHabits(json.data || []);
+      }
     } catch (err) {
-      console.error(err);
+      console.error('fetchHabits error:', err);
     } finally {
       setLoading(false);
     }
