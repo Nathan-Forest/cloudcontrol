@@ -63,7 +63,7 @@ function StatCard({
           <div className={`${color} opacity-80 group-hover:opacity-100 transition-opacity`}>
             {icon}
           </div>
-          <ChevronRight className="h-4 w-4 text-gray-600 group-hover:text-green-600 transition-colors"/>
+          <ChevronRight className="h-4 w-4 text-gray-600 group-hover:text-green-600 transition-colors" />
         </div>
         <div className={`text-2xl font-bold ${color}`}>{value}</div>
         <div className="text-gray-500 text-sm mt-0.5">{label}</div>
@@ -124,13 +124,16 @@ export default function Dashboard() {
     const fetchAll = async () => {
       try {
         const [statsRes, habitsRes, goalsRes, tasksRes] = await Promise.all([
-          fetch('/api/lifeos/stats'),
+          fetch('/api/lifeos'),
           fetch('/api/lifeos/habits/today'),
           fetch('/api/lifeos/goals/active'),
           fetch('/api/lifeos/tasks/open'),
         ]);
 
-        if (statsRes.ok) setStats((await statsRes.json()).data);
+        if (statsRes.ok) {
+          const json = await statsRes.json();
+          setStats(json.success ? json.data : null);
+        }
         if (habitsRes.ok) setHabits((await habitsRes.json()).data);
         if (goalsRes.ok) setGoals((await goalsRes.json()).data?.slice(0, 4));
         if (tasksRes.ok) setTasks((await tasksRes.json()).data?.slice(0, 5));
@@ -159,7 +162,7 @@ export default function Dashboard() {
             <p className="text-gray-500 text-sm mt-0.5">{formatDate()}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"/>
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             <span className="text-green-500 text-sm">LifeOS Live</span>
           </div>
         </div>
@@ -167,28 +170,28 @@ export default function Dashboard() {
         {/* Stat cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <StatCard
-            icon={<Activity className="h-5 w-5"/>}
+            icon={<Activity className="h-5 w-5" />}
             label="Habits today"
             value={stats ? `${stats.habitsToday}/${stats.activeHabits}` : '—'}
             href="/lifeos/habits"
             color="text-green-400"
           />
           <StatCard
-            icon={<Target className="h-5 w-5"/>}
+            icon={<Target className="h-5 w-5" />}
             label="Active goals"
             value={stats ? `${stats.activeGoals}` : '—'}
             href="/lifeos/goals"
             color="text-purple-400"
           />
           <StatCard
-            icon={<FolderKanban className="h-5 w-5"/>}
+            icon={<FolderKanban className="h-5 w-5" />}
             label="Open tasks"
             value={stats ? `${stats.openTasks}` : '—'}
             href="/lifeos/projects"
             color="text-amber-400"
           />
           <StatCard
-            icon={<BookOpen className="h-5 w-5"/>}
+            icon={<BookOpen className="h-5 w-5" />}
             label="Study today"
             value={stats ? `${stats.studyMinutesToday}m` : '—'}
             href="/lifeos/study"
@@ -207,15 +210,15 @@ export default function Dashboard() {
                 href="/lifeos/habits"
                 className="flex items-center gap-1 text-green-600 hover:text-green-400 text-sm transition-colors"
               >
-                <Plus className="h-4 w-4"/>
+                <Plus className="h-4 w-4" />
                 Add habit
               </Link>
             </div>
 
             {loading ? (
               <div className="space-y-3">
-                {[1,2,3].map(i => (
-                  <div key={i} className="animate-pulse h-12 bg-gray-800 rounded-lg"/>
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="animate-pulse h-12 bg-gray-800 rounded-lg" />
                 ))}
               </div>
             ) : habits.length === 0 ? (
@@ -225,7 +228,7 @@ export default function Dashboard() {
                   href="/lifeos/habits"
                   className="inline-flex items-center gap-2 bg-green-800/40 hover:bg-green-700/40 text-green-400 px-4 py-2 rounded-lg text-sm transition-colors"
                 >
-                  <Plus className="h-4 w-4"/>
+                  <Plus className="h-4 w-4" />
                   Create your first habit
                 </Link>
               </div>
@@ -247,8 +250,8 @@ export default function Dashboard() {
                       {habit.completedToday}/{habit.targetCount}
                     </span>
                     {habit.isDone
-                      ? <CheckCircle2 className="h-5 w-5 text-green-500"/>
-                      : <Circle className="h-5 w-5 text-gray-600"/>
+                      ? <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      : <Circle className="h-5 w-5 text-gray-600" />
                     }
                   </div>
                 ))}
@@ -269,8 +272,8 @@ export default function Dashboard() {
               </div>
               {loading ? (
                 <div className="space-y-2">
-                  {[1,2].map(i => (
-                    <div key={i} className="animate-pulse h-10 bg-gray-800 rounded-lg"/>
+                  {[1, 2].map(i => (
+                    <div key={i} className="animate-pulse h-10 bg-gray-800 rounded-lg" />
                   ))}
                 </div>
               ) : goals.length === 0 ? (
@@ -305,8 +308,8 @@ export default function Dashboard() {
               </div>
               {loading ? (
                 <div className="space-y-2">
-                  {[1,2,3].map(i => (
-                    <div key={i} className="animate-pulse h-8 bg-gray-800 rounded-lg"/>
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="animate-pulse h-8 bg-gray-800 rounded-lg" />
                   ))}
                 </div>
               ) : tasks.length === 0 ? (
@@ -315,7 +318,7 @@ export default function Dashboard() {
                 <div className="space-y-2">
                   {tasks.map(task => (
                     <div key={task.id} className="flex items-center gap-2">
-                      <Circle className="h-3.5 w-3.5 text-gray-600 flex-shrink-0"/>
+                      <Circle className="h-3.5 w-3.5 text-gray-600 flex-shrink-0" />
                       <span className="text-gray-300 text-sm flex-1 truncate">{task.title}</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded border ${priorityColor(task.priority)}`}>
                         {task.priority}
