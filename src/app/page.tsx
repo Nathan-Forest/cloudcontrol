@@ -7,6 +7,7 @@ import { usePulseMonitor } from '@/hooks/usePulseMonitor';
 import { getLanguageCount } from '@/lib/languageStats';
 import Image from 'next/image';
 import { LanguageBreakdown } from '@/components/LanguageBreakdown';
+import LifeOSWidget from '@/components/LifeOSWidget';
 
 export default function Home() {
   const { data, loading, error } = usePulseMonitor();
@@ -78,18 +79,12 @@ export default function Home() {
 
         {/* About Me */}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-30">
-          <div className="w-156 h-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          <div>
             <LanguageBreakdown />
           </div>
-          <div className="text-center mb-16">
-            <h2 className="text-2xl text-slate-300 mb-2">
-              Nathan Forest - Software Engineer
-            </h2>
-            <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Building production-grade applications with modern technologies.
-              From IT Support to Full-Stack Development.
-            </p>
+          <div>
+            <LifeOSWidget />
           </div>
         </div>
 
