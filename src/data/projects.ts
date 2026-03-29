@@ -71,4 +71,15 @@ export const projects: Project[] = [
     port: 5002,
     category: 'finance',
   },
+  {
+    id: 'lifeos',
+    name: 'LifeOS',
+    description: 'Personal operating system — habits, goals, projects and study tracking',
+    url: 'http://192.168.50.160:5005',
+    githubUrl: 'https://github.com/Nathan-Forest/LifeOS',
+    techStack: ['C#', '.NET', 'SQLite', 'Docker'],
+    pulseMonitorName: 'LifeOS',
+    port: 5005,
+    category: 'platform',
+  },
 ];
