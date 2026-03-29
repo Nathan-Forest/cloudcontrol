@@ -20,7 +20,7 @@ export const projects: Project[] = [
     id: 'pulsemonitor',
     name: 'PulseMonitor',
     description: 'Real-time application health monitoring service',
-    url: 'http://192.168.50.160:5173',
+    url: 'http://192.168.50.160:8080',
     githubUrl: 'https://github.com/Nathan-Forest/PulseMonitor',
     techStack: ['Python', 'TypeScript', 'FastAPI', 'React', 'Docker'],
     pulseMonitorName: 'PulseMonitor API',
