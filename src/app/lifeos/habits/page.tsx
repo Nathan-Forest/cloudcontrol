@@ -62,6 +62,9 @@ export default function HabitsPage() {
   const { token, isAuthenticated, authLoading } = useAuth();
   const router = useRouter();
 
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
+
   const [habits, setHabits] = useState<Habit[]>([]);
   const [todayHabits, setTodayHabits] = useState<TodayHabit[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,6 +177,35 @@ export default function HabitsPage() {
       setSaving(false);
     }
   };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Deactivate this habit?')) return;
+    setDeleting(id);
+    try {
+      await fetch(`/api/lifeos/habits/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders,
+      });
+      await fetchHabits();
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleUpdate = async (habit: Habit) => {
+    try {
+      await fetch(`/api/lifeos/habits/${habit.id}`, {
+        method: 'PUT',
+        headers: authHeaders,
+        body: JSON.stringify(habit),
+      });
+      setEditingHabit(null);
+      await fetchHabits();
+    } catch (err) {
+      console.error('Update error:', err);
+    }
+  };
+
   const completedCount = todayHabits.filter(h => h.isDone).length;
 
   if (!isAuthenticated) return null;
@@ -360,9 +392,21 @@ export default function HabitsPage() {
                       {habit.frequency} · {habit.targetCount}x · {habit.completions?.length ?? 0} total completions
                     </p>
                   </div>
-                  <button className="text-gray-600 hover:text-green-400 transition-colors">
-                    <Edit2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setEditingHabit(habit)}
+                      className="text-gray-600 hover:text-green-400 transition-colors"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(habit.id)}
+                      disabled={deleting === habit.id}
+                      className="text-gray-600 hover:text-red-400 transition-colors disabled:opacity-50"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -370,6 +414,84 @@ export default function HabitsPage() {
         )}
 
       </div>
+{/* Edit Modal */}
+{editingHabit && (
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="bg-gray-900 border border-green-900/40 rounded-xl p-6 w-full max-w-md">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-white font-semibold text-lg">Edit Habit</h2>
+        <button
+          onClick={() => setEditingHabit(null)}
+          className="text-gray-500 hover:text-white transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      <div className="space-y-4">
+
+        {/* Name */}
+        <div>
+          <label className="block text-sm text-green-400/80 mb-1.5">Habit name</label>
+          <input
+            type="text"
+            value={editingHabit.name}
+            onChange={e => setEditingHabit({ ...editingHabit, name: e.target.value })}
+            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors"
+          />
+        </div>
+
+        {/* Frequency */}
+        <div>
+          <label className="block text-sm text-green-400/80 mb-1.5">Frequency</label>
+          <select
+            value={editingHabit.frequency}
+            onChange={e => setEditingHabit({ ...editingHabit, frequency: e.target.value })}
+            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green-600 transition-colors"
+          >
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+          </select>
+        </div>
+
+        {/* Target count */}
+        <div>
+          <label className="block text-sm text-green-400/80 mb-1.5">Times per day</label>
+          <input
+            type="number"
+            min={1}
+            max={10}
+            value={editingHabit.targetCount}
+            onChange={e => setEditingHabit({ ...editingHabit, targetCount: Number(e.target.value) })}
+            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green-600 transition-colors"
+          />
+        </div>
+
+        {/* Colour */}
+        <div>
+          <label className="block text-sm text-green-400/80 mb-1.5">Colour</label>
+          <div className="flex gap-2">
+            {COLORS.map(c => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setEditingHabit({ ...editingHabit, color: c })}
+                className={`w-7 h-7 rounded-full transition-transform ${editingHabit.color === c ? 'scale-125 ring-2 ring-white/30' : 'hover:scale-110'}`}
+                style={{ backgroundColor: c }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Active toggle */}
+        <div className="flex items-center justify-between py-2">
+          <label className="text-sm text-green-400/80">Active</label>
+          <button
+            type="button"
+            onClick={() => setEditingHabit({ ...editingHabit, isActive: !editingHabit.isActive })}
+            className={`relative w-11 h-6 rounded-full transition-colors ${editingHabit.isActive ? 'bg-green-600' : 'bg-gray-700'}`}
+          >
+            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full t
     </div>
   );
 }
