@@ -491,7 +491,30 @@ export default function HabitsPage() {
             onClick={() => setEditingHabit({ ...editingHabit, isActive: !editingHabit.isActive })}
             className={`relative w-11 h-6 rounded-full transition-colors ${editingHabit.isActive ? 'bg-green-600' : 'bg-gray-700'}`}
           >
-            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full t
+            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${editingHabit.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
+          </button>
+        </div>
+
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={() => handleUpdate(editingHabit)}
+          className="flex-1 bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+        >
+          Save changes
+        </button>
+        <button
+          onClick={() => setEditingHabit(null)}
+          className="px-4 py-2 text-gray-400 hover:text-white rounded-lg text-sm transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }
