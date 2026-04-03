@@ -179,6 +179,7 @@ export default function GoalsPage() {
         headers: authHeaders,
         body: JSON.stringify({
           title: milestoneTitle,
+          description: '',  
           dueDate: milestoneDueDate || null,
           isComplete: false,
         }),
@@ -197,7 +198,10 @@ export default function GoalsPage() {
       await fetch(`/api/lifeos/goals/milestones/${milestone.id}`, {
         method: 'PUT',
         headers: authHeaders,
-        body: JSON.stringify({ ...milestone, isComplete: !milestone.isComplete }),
+        body: JSON.stringify({ 
+        ...milestone,
+        description: milestone.description || '',
+        isComplete: !milestone.isComplete }),
       });
       await fetchGoals();
     } catch (err) {
