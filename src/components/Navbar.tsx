@@ -19,8 +19,8 @@ export function Navbar() {
         { href: '/', label: 'Home', icon: Activity },
         { href: '/about', label: 'About', icon: User },
         { href: '/projects', label: 'Projects', icon: Code2 },
-        { href: '/tools', label: 'Tools', icon: Wrench },
-        { href: '/admin', label: 'Admin', icon: Shield },
+        { href: '/tools', label: 'Server Control Centre', icon: Wrench },
+    
     ];
 
     const lifeOSLinks = [
