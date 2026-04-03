@@ -113,7 +113,30 @@ export default function Dashboard() {
     'Content-Type': 'application/json',
   };
   const handleCompleteHabit = async (id: number) => {
-    setCompletingHabit(id);
+const handleCompleteHabit = async (id: number) => {
+  // Optimistically mark as done immediately
+  setHabits(prev => prev.map(h =>
+    h.id === id ? { ...h, isDone: true, completedToday: h.completedToday + 1 } : h
+  ));
+  setCompletingHabit(id);
+  try {
+    await fetch(`/api/lifeos/habits/${id}/complete`, {
+      method: 'POST',
+      headers,
+    });
+    const [statsRes, habitsRes] = await Promise.all([
+      fetch('/api/lifeos', { headers }),
+      fetch('/api/lifeos/habits/today', { headers }),
+    ]);
+    if (statsRes.ok) {
+      const json = await statsRes.json();
+      setStats(json.success ? json.data : null);
+    }
+    if (habitsRes.ok) setHabits((await habitsRes.json()).data);
+  } finally {
+    setCompletingHabit(null);
+  }
+};
     try {
       await fetch(`/api/lifeos/habits/${id}/complete`, {
         method: 'POST',
