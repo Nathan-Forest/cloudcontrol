@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Activity, Code2, Wrench, Shield, Menu, X, Leaf, ChevronDown, LayoutDashboard, Target, FolderKanban, BookOpen, LogOut } from 'lucide-react';
+import { User, Activity, Code2, Wrench, Shield, Menu, X, Leaf, ChevronDown, LayoutDashboard, Target, FolderKanban, BookOpen, LogOut } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -17,6 +17,7 @@ export function Navbar() {
 
     const links = [
         { href: '/', label: 'Home', icon: Activity },
+        { href: '/about', label: 'About', icon: <User className="h-4 w-4" /> }
         { href: '/projects', label: 'Projects', icon: Code2 },
         { href: '/tools', label: 'Tools', icon: Wrench },
         { href: '/admin', label: 'Admin', icon: Shield },
