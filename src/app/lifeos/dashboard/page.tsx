@@ -113,30 +113,30 @@ export default function Dashboard() {
     'Content-Type': 'application/json',
   };
   const handleCompleteHabit = async (id: number) => {
-const handleCompleteHabit = async (id: number) => {
-  // Optimistically mark as done immediately
-  setHabits(prev => prev.map(h =>
-    h.id === id ? { ...h, isDone: true, completedToday: h.completedToday + 1 } : h
-  ));
-  setCompletingHabit(id);
-  try {
-    await fetch(`/api/lifeos/habits/${id}/complete`, {
-      method: 'POST',
-      headers,
-    });
-    const [statsRes, habitsRes] = await Promise.all([
-      fetch('/api/lifeos', { headers }),
-      fetch('/api/lifeos/habits/today', { headers }),
-    ]);
-    if (statsRes.ok) {
-      const json = await statsRes.json();
-      setStats(json.success ? json.data : null);
-    }
-    if (habitsRes.ok) setHabits((await habitsRes.json()).data);
-  } finally {
-    setCompletingHabit(null);
-  }
-};
+    const handleCompleteHabit = async (id: number) => {
+      // Optimistically mark as done immediately
+      setHabits(prev => prev.map(h =>
+        h.id === id ? { ...h, isDone: true, completedToday: h.completedToday + 1 } : h
+      ));
+      setCompletingHabit(id);
+      try {
+        await fetch(`/api/lifeos/habits/${id}/complete`, {
+          method: 'POST',
+          headers,
+        });
+        const [statsRes, habitsRes] = await Promise.all([
+          fetch('/api/lifeos', { headers }),
+          fetch('/api/lifeos/habits/today', { headers }),
+        ]);
+        if (statsRes.ok) {
+          const json = await statsRes.json();
+          setStats(json.success ? json.data : null);
+        }
+        if (habitsRes.ok) setHabits((await habitsRes.json()).data);
+      } finally {
+        setCompletingHabit(null);
+      }
+    };
     try {
       await fetch(`/api/lifeos/habits/${id}/complete`, {
         method: 'POST',
@@ -286,6 +286,10 @@ const handleCompleteHabit = async (id: number) => {
                   <div key={i} className="animate-pulse h-12 bg-gray-800 rounded-lg" />
                 ))}
               </div>
+            ) : habits.filter(h => !h.isDone).length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-green-500 font-medium">All habits done today! 🎉</p>
+              </div>
             ) : habits.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-600 mb-3">No habits yet</p>
@@ -299,7 +303,7 @@ const handleCompleteHabit = async (id: number) => {
               </div>
             ) : (
               <div className="space-y-2">
-                {habits.map(habit => (
+                {habits.filter(h => !h.isDone).map(habit => (
                   <div
                     key={habit.id}
                     className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/40 border border-gray-700/30"

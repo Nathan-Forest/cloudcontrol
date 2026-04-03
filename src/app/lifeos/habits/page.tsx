@@ -320,13 +320,17 @@ export default function HabitsPage() {
                 <div key={i} className="animate-pulse h-14 bg-gray-800 rounded-lg" />
               ))}
             </div>
+          ) : todayHabits.filter(h => !h.isDone).length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-green-500 font-medium">All habits done today! 🎉</p>
+            </div>
           ) : todayHabits.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-600 mb-3">No habits yet — create your first one above</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {todayHabits.map(habit => {
+              {todayHabits.filter(h => !h.isDone).map(habit => {
                 const full = habits.find(h => h.id === habit.id);
                 const streak = full ? getStreakCount(full.completions) : 0;
                 return (
@@ -414,107 +418,107 @@ export default function HabitsPage() {
         )}
 
       </div>
-{/* Edit Modal */}
-{editingHabit && (
-  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div className="bg-gray-900 border border-green-900/40 rounded-xl p-6 w-full max-w-md">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-white font-semibold text-lg">Edit Habit</h2>
-        <button
-          onClick={() => setEditingHabit(null)}
-          className="text-gray-500 hover:text-white transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="space-y-4">
-
-        {/* Name */}
-        <div>
-          <label className="block text-sm text-green-400/80 mb-1.5">Habit name</label>
-          <input
-            type="text"
-            value={editingHabit.name}
-            onChange={e => setEditingHabit({ ...editingHabit, name: e.target.value })}
-            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors"
-          />
-        </div>
-
-        {/* Frequency */}
-        <div>
-          <label className="block text-sm text-green-400/80 mb-1.5">Frequency</label>
-          <select
-            value={editingHabit.frequency}
-            onChange={e => setEditingHabit({ ...editingHabit, frequency: e.target.value })}
-            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green-600 transition-colors"
-          >
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-          </select>
-        </div>
-
-        {/* Target count */}
-        <div>
-          <label className="block text-sm text-green-400/80 mb-1.5">Times per day</label>
-          <input
-            type="number"
-            min={1}
-            max={10}
-            value={editingHabit.targetCount}
-            onChange={e => setEditingHabit({ ...editingHabit, targetCount: Number(e.target.value) })}
-            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green-600 transition-colors"
-          />
-        </div>
-
-        {/* Colour */}
-        <div>
-          <label className="block text-sm text-green-400/80 mb-1.5">Colour</label>
-          <div className="flex gap-2">
-            {COLORS.map(c => (
+      {/* Edit Modal */}
+      {editingHabit && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 border border-green-900/40 rounded-xl p-6 w-full max-w-md">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white font-semibold text-lg">Edit Habit</h2>
               <button
-                key={c}
-                type="button"
-                onClick={() => setEditingHabit({ ...editingHabit, color: c })}
-                className={`w-7 h-7 rounded-full transition-transform ${editingHabit.color === c ? 'scale-125 ring-2 ring-white/30' : 'hover:scale-110'}`}
-                style={{ backgroundColor: c }}
-              />
-            ))}
+                onClick={() => setEditingHabit(null)}
+                className="text-gray-500 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+
+              {/* Name */}
+              <div>
+                <label className="block text-sm text-green-400/80 mb-1.5">Habit name</label>
+                <input
+                  type="text"
+                  value={editingHabit.name}
+                  onChange={e => setEditingHabit({ ...editingHabit, name: e.target.value })}
+                  className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors"
+                />
+              </div>
+
+              {/* Frequency */}
+              <div>
+                <label className="block text-sm text-green-400/80 mb-1.5">Frequency</label>
+                <select
+                  value={editingHabit.frequency}
+                  onChange={e => setEditingHabit({ ...editingHabit, frequency: e.target.value })}
+                  className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green-600 transition-colors"
+                >
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                </select>
+              </div>
+
+              {/* Target count */}
+              <div>
+                <label className="block text-sm text-green-400/80 mb-1.5">Times per day</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={editingHabit.targetCount}
+                  onChange={e => setEditingHabit({ ...editingHabit, targetCount: Number(e.target.value) })}
+                  className="w-full bg-gray-800/60 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-green-600 transition-colors"
+                />
+              </div>
+
+              {/* Colour */}
+              <div>
+                <label className="block text-sm text-green-400/80 mb-1.5">Colour</label>
+                <div className="flex gap-2">
+                  {COLORS.map(c => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setEditingHabit({ ...editingHabit, color: c })}
+                      className={`w-7 h-7 rounded-full transition-transform ${editingHabit.color === c ? 'scale-125 ring-2 ring-white/30' : 'hover:scale-110'}`}
+                      style={{ backgroundColor: c }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Active toggle */}
+              <div className="flex items-center justify-between py-2">
+                <label className="text-sm text-green-400/80">Active</label>
+                <button
+                  type="button"
+                  onClick={() => setEditingHabit({ ...editingHabit, isActive: !editingHabit.isActive })}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${editingHabit.isActive ? 'bg-green-600' : 'bg-gray-700'}`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${editingHabit.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
+                </button>
+              </div>
+
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => handleUpdate(editingHabit)}
+                className="flex-1 bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
+                Save changes
+              </button>
+              <button
+                onClick={() => setEditingHabit(null)}
+                className="px-4 py-2 text-gray-400 hover:text-white rounded-lg text-sm transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Active toggle */}
-        <div className="flex items-center justify-between py-2">
-          <label className="text-sm text-green-400/80">Active</label>
-          <button
-            type="button"
-            onClick={() => setEditingHabit({ ...editingHabit, isActive: !editingHabit.isActive })}
-            className={`relative w-11 h-6 rounded-full transition-colors ${editingHabit.isActive ? 'bg-green-600' : 'bg-gray-700'}`}
-          >
-            <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${editingHabit.isActive ? 'translate-x-6' : 'translate-x-1'}`} />
-          </button>
-        </div>
-
-      </div>
-
-      {/* Actions */}
-      <div className="flex gap-3 mt-6">
-        <button
-          onClick={() => handleUpdate(editingHabit)}
-          className="flex-1 bg-green-700 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-        >
-          Save changes
-        </button>
-        <button
-          onClick={() => setEditingHabit(null)}
-          className="px-4 py-2 text-gray-400 hover:text-white rounded-lg text-sm transition-colors"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 }
