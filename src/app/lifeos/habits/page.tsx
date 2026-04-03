@@ -93,8 +93,7 @@ export default function HabitsPage() {
   };
 
   const fetchHabits = async () => {
-    console.log('fetchHabits called, token:', token ? token.substring(0, 20) + '...' : 'NULL');
-    try {
+        try {
       const [habitsRes, todayRes] = await Promise.all([
         fetch('/api/lifeos/habits', {
           headers: {
@@ -106,7 +105,8 @@ export default function HabitsPage() {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
-          }
+          },
+          cache: 'no-store',
         }),
       ]);
       console.log('habits status:', habitsRes.status);

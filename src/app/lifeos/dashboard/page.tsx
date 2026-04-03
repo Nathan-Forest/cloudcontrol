@@ -126,7 +126,7 @@ export default function Dashboard() {
         });
         const [statsRes, habitsRes] = await Promise.all([
           fetch('/api/lifeos', { headers }),
-          fetch('/api/lifeos/habits/today', { headers }),
+          fetch('/api/lifeos/habits/today', { headers, cache: 'no-store' }),
         ]);
         if (statsRes.ok) {
           const json = await statsRes.json();
