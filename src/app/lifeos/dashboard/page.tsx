@@ -108,7 +108,10 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [completingHabit, setCompletingHabit] = useState<number | null>(null);
   const [completingTask, setCompletingTask] = useState<number | null>(null);
-
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  };
   const handleCompleteHabit = async (id: number) => {
     setCompletingHabit(id);
     try {
@@ -159,10 +162,6 @@ export default function Dashboard() {
   useEffect(() => {
     if (!token) return;
 
-    const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    };
 
     const fetchAll = async () => {
       try {
