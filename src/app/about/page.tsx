@@ -1,11 +1,10 @@
 'use client';
 
-import { languageStats } from '@/lib/languageStats';
+import { getLanguageStats } from '@/lib/languageStats';
+const languageStats = getLanguageStats();
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import {
-  Github, Linkedin, Mail, ExternalLink,
-  Server, Code2, Terminal, Wrench
-} from 'lucide-react';
+import { Mail, ExternalLink, Server, Code2, Terminal, Wrench } from 'lucide-react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'];
 
@@ -123,7 +122,7 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
             <a>
-              <Github className="h-4 w-4" />
+              <FaGithub className="h-4 w-4" />
               GitHub
               <ExternalLink className="h-3 w-3 opacity-50" />
             </a>
@@ -133,7 +132,7 @@ export default function AboutPage() {
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-blue-900/20 hover:bg-blue-800/30 border border-blue-800/30 hover:border-blue-700/50 text-blue-400 hover:text-blue-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
            <a>
-              <Linkedin className="h-4 w-4" />
+              <FaLinkedin className="h-4 w-4" />
               LinkedIn
               <ExternalLink className="h-3 w-3 opacity-50" />
             </a>

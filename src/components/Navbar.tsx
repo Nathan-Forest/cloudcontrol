@@ -17,7 +17,7 @@ export function Navbar() {
 
     const links = [
         { href: '/', label: 'Home', icon: Activity },
-        { href: '/about', label: 'About', icon: <User className="h-4 w-4" /> }
+        { href: '/about', label: 'About', icon: User },
         { href: '/projects', label: 'Projects', icon: Code2 },
         { href: '/tools', label: 'Tools', icon: Wrench },
         { href: '/admin', label: 'Admin', icon: Shield },
