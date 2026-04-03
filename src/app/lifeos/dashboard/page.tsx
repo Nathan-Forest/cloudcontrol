@@ -40,6 +40,8 @@ interface Task {
   id: number;
   title: string;
   priority: string;
+  notes: string;
+  isComplete: boolean;
   project: { title: string };
 }
 
@@ -143,6 +145,46 @@ export default function Dashboard() {
         console.error('Dashboard fetch error:', err);
       } finally {
         setLoading(false);
+      }
+    };
+
+    const [completingHabit, setCompletingHabit] = useState<number | null>(null);
+    const [completingTask, setCompletingTask] = useState<number | null>(null);
+
+    const handleCompleteHabit = async (id: number) => {
+      setCompletingHabit(id);
+      try {
+        await fetch(`/api/lifeos/habits/${id}/complete`, {
+          method: 'POST',
+          headers,
+        });
+        // Refresh habits and stats
+        const [statsRes, habitsRes] = await Promise.all([
+          fetch('/api/lifeos', { headers }),
+          fetch('/api/lifeos/habits/today', { headers }),
+        ]);
+        if (statsRes.ok) {
+          const json = await statsRes.json();
+          setStats(json.success ? json.data : null);
+        }
+        if (habitsRes.ok) setHabits((await habitsRes.json()).data);
+      } finally {
+        setCompletingHabit(null);
+      }
+    };
+
+    const handleCompleteTask = async (task: Task) => {
+      setCompletingTask(task.id);
+      try {
+        await fetch(`/api/lifeos/projects/tasks/${task.id}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify({ ...task, isComplete: true }),
+        });
+        const tasksRes = await fetch('/api/lifeos/tasks/open', { headers });
+        if (tasksRes.ok) setTasks((await tasksRes.json()).data?.slice(0, 5));
+      } finally {
+        setCompletingTask(null);
       }
     };
 
@@ -251,10 +293,16 @@ export default function Dashboard() {
                     <span className="text-xs text-gray-600">
                       {habit.completedToday}/{habit.targetCount}
                     </span>
-                    {habit.isDone
-                      ? <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      : <Circle className="h-5 w-5 text-gray-600" />
-                    }
+                    <button
+                      onClick={() => !habit.isDone && handleCompleteHabit(habit.id)}
+                      disabled={completingHabit === habit.id || habit.isDone}
+                      className="transition-colors disabled:opacity-50"
+                    >
+                      {habit.isDone
+                        ? <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        : <Circle className="h-5 w-5 text-gray-600 hover:text-green-500" />
+                      }
+                    </button>
                   </div>
                 ))}
               </div>
@@ -320,7 +368,13 @@ export default function Dashboard() {
                 <div className="space-y-2">
                   {tasks.map(task => (
                     <div key={task.id} className="flex items-center gap-2">
-                      <Circle className="h-3.5 w-3.5 text-gray-600 flex-shrink-0" />
+                      <button
+  onClick={() => handleCompleteTask(task)}
+  disabled={completingTask === task.id}
+  className="flex-shrink-0 transition-colors disabled:opacity-50"
+>
+  <Circle className="h-3.5 w-3.5 text-gray-600 hover:text-green-500" />
+</button>
                       <span className="text-gray-300 text-sm flex-1 truncate">{task.title}</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded border ${priorityColor(task.priority)}`}>
                         {task.priority}
