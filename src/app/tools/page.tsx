@@ -3,7 +3,7 @@ import { HabitTracker } from '@/components/HabitTracker';
 export default function ToolsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 pt-28 pb-12 mb-10">
         <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-6 mb-8">
           <p className="text-yellow-400 text-sm">
             🔐 Authentication required. Integration with SecureAuth coming soon!
