@@ -50,28 +50,28 @@ const badgeColors = {
 
 const timeline = [
   {
-    year: '2015–2024',
+    year: '2015–2025',
     title: 'IT Support & Systems Administration',
     description: 'Spent nearly a decade in IT support, managing infrastructure, troubleshooting systems, and developing a deep understanding of how technology works under the hood.',
     color: 'border-gray-600',
     dot: 'bg-gray-500',
   },
   {
-    year: '2024',
+    year: '2025',
     title: 'The Decision — IT to Development',
     description: 'Made the deliberate choice to transition into software development. Started learning JavaScript, then TypeScript, then C# — always building real things rather than following tutorials.',
     color: 'border-blue-800',
     dot: 'bg-blue-500',
   },
   {
-    year: 'Early 2025',
+    year: 'Early 2026',
     title: 'Building The Foundation',
     description: 'Deployed first containerised applications. Built SecureAuth with PostgreSQL, learning EF Core, JWT authentication, and production deployment patterns from scratch.',
     color: 'border-purple-800',
     dot: 'bg-purple-500',
   },
   {
-    year: '2025',
+    year: '2026',
     title: 'The Forest Den — Born',
     description: 'Converted a ThinkCentre into a home lab Ubuntu Server and began building The Forest Den — a full home DevOps platform with 6 production applications, Docker orchestration, and Nginx reverse proxy.',
     color: 'border-green-800',
@@ -116,30 +116,30 @@ export default function AboutPage() {
 
           {/* Contact links */}
           <div className="flex items-center justify-center gap-4 mt-8 flex-wrap">
-            
+            <a>
               href="https://github.com/Nathan-Forest"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
-            <a>
+            
               <FaGithub className="h-4 w-4" />
               GitHub
               <ExternalLink className="h-3 w-3 opacity-50" />
             </a>
-            
+            <a>
               href="https://linkedin.com/in/nathan-forest-australia"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-blue-900/20 hover:bg-blue-800/30 border border-blue-800/30 hover:border-blue-700/50 text-blue-400 hover:text-blue-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
-           <a>
+           
               <FaLinkedin className="h-4 w-4" />
               LinkedIn
               <ExternalLink className="h-3 w-3 opacity-50" />
             </a>
-            
+             <a>
               href="mailto:nathan@forestden.dev"
               className="flex items-center gap-2 bg-green-900/20 hover:bg-green-800/30 border border-green-800/30 hover:border-green-700/50 text-green-400 hover:text-green-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
-            <a>
+           
               <Mail className="h-4 w-4" />
               nathan@forestden.dev
             </a>
