@@ -87,8 +87,8 @@ const timeline = [
 ];
 
 const pieData = languageStats.map(stat => ({
-  name: stat.language,
-  value: stat.projectCount,
+  name: stat.name,
+  value: stat.count,
 }));
 
 export default function AboutPage() {
@@ -209,7 +209,7 @@ export default function AboutPage() {
                         borderRadius: '8px',
                         color: '#f9fafb',
                       }}
-                      formatter={(value: number) => [`${value} projects`, '']}
+                      formatter={(value: unknown) => [`${value} projects`, '']}
                     />
                     <Legend
                       formatter={(value) => (
@@ -223,16 +223,16 @@ export default function AboutPage() {
               {/* Language bars */}
               <div className="space-y-4">
                 {languageStats.map((stat, index) => (
-                  <div key={stat.language}>
+                  <div key={stat.name}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-gray-300 text-sm font-medium">{stat.language}</span>
-                      <span className="text-gray-500 text-xs">{stat.projectCount} projects</span>
+                      <span className="text-gray-300 text-sm font-medium">{stat.name}</span>
+                      <span className="text-gray-500 text-xs">{stat.count} projects</span>
                     </div>
                     <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all"
                         style={{
-                          width: `${(stat.projectCount / Math.max(...languageStats.map(s => s.projectCount))) * 100}%`,
+                          width: `${(stat.count / Math.max(...languageStats.map(s => s.count))) * 100}%`,
                           backgroundColor: COLORS[index % COLORS.length],
                         }}
                       />
