@@ -33,6 +33,11 @@ interface LogState {
   [key: string]: string[];
 }
 
+interface PendingAction {
+  containerName: string;
+  action: 'start' | 'stop' | 'restart';
+}
+
 function formatBytes(bytes: number) {
   const gb = bytes / (1024 ** 3);
   return gb >= 1 ? `${gb.toFixed(1)} GB` : `${(bytes / (1024 ** 2)).toFixed(0)} MB`;
@@ -70,6 +75,24 @@ function StatBar({ value, color }: { value: number; color: string }) {
   );
 }
 
+const ACTION_STYLES = {
+  start: {
+    label: 'Start',
+    confirmColor: 'bg-green-600 hover:bg-green-700',
+    textColor: 'text-green-400',
+  },
+  stop: {
+    label: 'Stop',
+    confirmColor: 'bg-red-600 hover:bg-red-700',
+    textColor: 'text-red-400',
+  },
+  restart: {
+    label: 'Restart',
+    confirmColor: 'bg-amber-600 hover:bg-amber-700',
+    textColor: 'text-amber-400',
+  },
+};
+
 export default function ToolsPage() {
   const { token, isAuthenticated, authLoading } = useAuth();
   const router = useRouter();
@@ -83,6 +106,10 @@ export default function ToolsPage() {
   const [logsLoading, setLogsLoading] = useState<string | null>(null);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
   const [actionMessage, setActionMessage] = useState<{ text: string; success: boolean } | null>(null);
+
+  // Confirmation modal state
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
+  const [modalError, setModalError] = useState<string | null>(null);
 
   const authHeaders = {
     'Authorization': `Bearer ${token}`,
@@ -117,7 +144,6 @@ export default function ToolsPage() {
     if (token) fetchAll();
   }, [token, fetchAll]);
 
-  // Auto refresh every 30 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       if (token) fetchAll();
@@ -125,28 +151,41 @@ export default function ToolsPage() {
     return () => clearInterval(interval);
   }, [token, fetchAll]);
 
-  const handleAction = async (name: string, action: string) => {
-    const confirmMsg = action === 'stop'
-      ? `Stop container "${name}"? This will take it offline.`
-      : `${action.charAt(0).toUpperCase() + action.slice(1)} container "${name}"?`;
+  const openConfirm = (containerName: string, action: 'start' | 'stop' | 'restart') => {
+    setModalError(null);
+    setPendingAction({ containerName, action });
+  };
 
-    if (!confirm(confirmMsg)) return;
+  const closeConfirm = () => {
+    if (actionLoading) return;
+    setPendingAction(null);
+    setModalError(null);
+  };
 
-    setActionLoading(`${name}-${action}`);
-    setActionMessage(null);
+  const executeAction = async () => {
+    if (!pendingAction) return;
+    const { containerName, action } = pendingAction;
+
+    setActionLoading(`${containerName}-${action}`);
+    setModalError(null);
+
     try {
-      const res = await fetch(`/api/servercontrol/${name}/${action}`, {
+      const res = await fetch(`/api/servercontrol/${containerName}/${action}`, {
         method: 'POST',
         headers: authHeaders,
       });
       const data = await res.json();
-      setActionMessage({
-        text: data.message || `${action} successful`,
-        success: res.ok,
-      });
+
+      if (!res.ok) throw new Error(data.message || `${action} failed`);
+
+      setActionMessage({ text: data.message || `${action} successful`, success: true });
+      setPendingAction(null);
       await fetchAll();
     } catch (err) {
-      setActionMessage({ text: `Action failed: ${err}`, success: false });
+      const message = err instanceof Error ? err.message : 'Action failed';
+      // Show error inside modal so user can retry or cancel
+      setModalError(message);
+      setActionMessage({ text: message, success: false });
     } finally {
       setActionLoading(null);
       setTimeout(() => setActionMessage(null), 4000);
@@ -328,110 +367,172 @@ export default function ToolsPage() {
             </div>
           ) : (
             <div className="divide-y divide-gray-800">
-              {containers.map(container => (
-                <div key={container.name}>
-                  {/* Container row */}
-                  <div className="px-6 py-4 flex items-center gap-4">
+              {containers.map(container => {
+                const isCloudControl = container.name === 'cloudcontrol';
+                const isActioning = (action: string) => actionLoading === `${container.name}-${action}`;
 
-                    {/* Status + name */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <StatusDot status={container.status} />
-                        <span className="text-white font-medium">{container.name}</span>
-                        <span className={`text-xs capitalize ${statusColor(container.status)}`}>
-                          {container.status}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 text-xs mt-0.5 truncate">
-                        {container.image} · Created {container.created}
-                      </p>
-                    </div>
+                return (
+                  <div key={container.name}>
+                    <div className="px-6 py-4 flex items-center gap-4">
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      {/* Logs */}
-                      <button
-                        onClick={() => handleViewLogs(container.name)}
-                        className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 bg-gray-800/60 hover:bg-gray-700/60 px-2.5 py-1.5 rounded-lg transition-colors"
-                      >
-                        <FileText className="h-3.5 w-3.5" />
-                        Logs
-                        {expandedLogs === container.name
-                          ? <ChevronUp className="h-3 w-3" />
-                          : <ChevronDown className="h-3 w-3" />
-                        }
-                      </button>
-
-                      {/* Start */}
-                      <button
-                        onClick={() => handleAction(container.name, 'start')}
-                        disabled={container.status === 'running' || actionLoading === `${container.name}-start`}
-                        className="flex items-center gap-1.5 text-xs text-green-400 hover:text-green-300 bg-green-900/20 hover:bg-green-800/30 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg transition-colors border border-green-900/30"
-                      >
-                        <Play className="h-3.5 w-3.5" />
-                        Start
-                      </button>
-
-                      {/* Stop */}
-                      <button
-                        onClick={() => handleAction(container.name, 'stop')}
-                        disabled={container.status !== 'running' || actionLoading === `${container.name}-stop`}
-                        className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 bg-red-900/20 hover:bg-red-800/30 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg transition-colors border border-red-900/30"
-                      >
-                        <Square className="h-3.5 w-3.5" />
-                        Stop
-                      </button>
-
-                      {/* Restart */}
-                      <button
-                        onClick={() => handleAction(container.name, 'restart')}
-                        disabled={container.status !== 'running' || actionLoading === `${container.name}-restart`}
-                        className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 bg-amber-900/20 hover:bg-amber-800/30 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg transition-colors border border-amber-900/30"
-                      >
-                        <RotateCcw className={`h-3.5 w-3.5 ${actionLoading === `${container.name}-restart` ? 'animate-spin' : ''}`} />
-                        Restart
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Logs panel */}
-                  {expandedLogs === container.name && (
-                    <div className="border-t border-gray-800 bg-gray-950/60 px-6 py-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-                          Last 50 log lines
-                        </span>
-                        <button
-                          onClick={() => refreshLogs(container.name)}
-                          disabled={logsLoading === container.name}
-                          className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-400 transition-colors"
-                        >
-                          <RefreshCw className={`h-3 w-3 ${logsLoading === container.name ? 'animate-spin' : ''}`} />
-                          Refresh
-                        </button>
-                      </div>
-                      {logsLoading === container.name ? (
-                        <div className="animate-pulse h-32 bg-gray-800 rounded" />
-                      ) : (
-                        <div className="bg-black/40 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-xs text-gray-400 space-y-0.5">
-                          {logs[container.name]?.length > 0 ? (
-                            logs[container.name].map((line, i) => (
-                              <p key={i} className="leading-5 break-all">{line}</p>
-                            ))
-                          ) : (
-                            <p className="text-gray-700">No logs available</p>
+                      {/* Status + name */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <StatusDot status={container.status} />
+                          <span className="text-white font-medium">{container.name}</span>
+                          <span className={`text-xs capitalize ${statusColor(container.status)}`}>
+                            {container.status}
+                          </span>
+                          {isCloudControl && (
+                            <span className="text-xs text-amber-500/70 bg-amber-900/20 border border-amber-900/30 px-1.5 py-0.5 rounded">
+                              this app
+                            </span>
                           )}
                         </div>
-                      )}
+                        <p className="text-gray-600 text-xs mt-0.5 truncate">
+                          {container.image} · Created {container.created}
+                        </p>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+
+                        {/* Logs */}
+                        <button
+                          onClick={() => handleViewLogs(container.name)}
+                          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 bg-gray-800/60 hover:bg-gray-700/60 px-2.5 py-1.5 rounded-lg transition-colors"
+                        >
+                          <FileText className="h-3.5 w-3.5" />
+                          Logs
+                          {expandedLogs === container.name
+                            ? <ChevronUp className="h-3 w-3" />
+                            : <ChevronDown className="h-3 w-3" />
+                          }
+                        </button>
+
+                        {/* Start */}
+                        <button
+                          onClick={() => openConfirm(container.name, 'start')}
+                          disabled={container.status === 'running' || isActioning('start')}
+                          className="flex items-center gap-1.5 text-xs text-green-400 hover:text-green-300 bg-green-900/20 hover:bg-green-800/30 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg transition-colors border border-green-900/30"
+                        >
+                          <Play className="h-3.5 w-3.5" />
+                          Start
+                        </button>
+
+                        {/* Stop — disabled entirely for cloudcontrol */}
+                        <button
+                          onClick={() => openConfirm(container.name, 'stop')}
+                          disabled={container.status !== 'running' || isActioning('stop') || isCloudControl}
+                          title={isCloudControl ? 'Cannot stop the active control panel' : undefined}
+                          className="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 bg-red-900/20 hover:bg-red-800/30 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg transition-colors border border-red-900/30"
+                        >
+                          <Square className="h-3.5 w-3.5" />
+                          Stop
+                        </button>
+
+                        {/* Restart */}
+                        <button
+                          onClick={() => openConfirm(container.name, 'restart')}
+                          disabled={container.status !== 'running' || isActioning('restart')}
+                          className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 bg-amber-900/20 hover:bg-amber-800/30 disabled:opacity-30 disabled:cursor-not-allowed px-2.5 py-1.5 rounded-lg transition-colors border border-amber-900/30"
+                        >
+                          <RotateCcw className={`h-3.5 w-3.5 ${isActioning('restart') ? 'animate-spin' : ''}`} />
+                          Restart
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
+
+                    {/* Logs panel */}
+                    {expandedLogs === container.name && (
+                      <div className="border-t border-gray-800 bg-gray-950/60 px-6 py-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                            Last 50 log lines
+                          </span>
+                          <button
+                            onClick={() => refreshLogs(container.name)}
+                            disabled={logsLoading === container.name}
+                            className="flex items-center gap-1 text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                          >
+                            <RefreshCw className={`h-3 w-3 ${logsLoading === container.name ? 'animate-spin' : ''}`} />
+                            Refresh
+                          </button>
+                        </div>
+                        {logsLoading === container.name ? (
+                          <div className="animate-pulse h-32 bg-gray-800 rounded" />
+                        ) : (
+                          <div className="bg-black/40 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-xs text-gray-400 space-y-0.5">
+                            {logs[container.name]?.length > 0 ? (
+                              logs[container.name].map((line, i) => (
+                                <p key={i} className="leading-5 break-all">{line}</p>
+                              ))
+                            ) : (
+                              <p className="text-gray-700">No logs available</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
-
       </div>
+
+      {/* Confirmation Modal */}
+      {pendingAction && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+          onClick={closeConfirm}
+        >
+          <div
+            className="bg-[#0f1420] border border-gray-700/60 rounded-2xl p-6 w-full max-w-sm shadow-2xl mx-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="text-white font-semibold text-lg mb-1">Confirm Action</h3>
+            <p className="text-gray-400 text-sm mb-6">
+              Are you sure you want to{' '}
+              <span className={`font-medium ${ACTION_STYLES[pendingAction.action].textColor}`}>
+                {pendingAction.action}
+              </span>{' '}
+              <span className="text-white font-medium">{pendingAction.containerName}</span>?
+              {pendingAction.action === 'stop' && (
+                <span className="block mt-1 text-red-400/70">This will take it offline.</span>
+              )}
+            </p>
+
+            {modalError && (
+              <div className="mb-4 p-3 rounded-lg bg-red-900/20 border border-red-800/30 text-red-400 text-sm flex items-center gap-2">
+                <XCircle className="h-4 w-4 flex-shrink-0" />
+                {modalError}
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={closeConfirm}
+                disabled={!!actionLoading}
+                className="px-4 py-2 rounded-lg border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors disabled:opacity-50 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={executeAction}
+                disabled={!!actionLoading}
+                className={`px-4 py-2 rounded-lg text-white font-medium transition-colors disabled:opacity-50 text-sm ${ACTION_STYLES[pendingAction.action].confirmColor}`}
+              >
+                {actionLoading
+                  ? `${ACTION_STYLES[pendingAction.action].label}ing...`
+                  : ACTION_STYLES[pendingAction.action].label
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
