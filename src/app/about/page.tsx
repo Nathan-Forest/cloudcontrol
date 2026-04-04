@@ -3,7 +3,7 @@
 import { getLanguageStats } from '@/lib/languageStats';
 const languageStats = getLanguageStats();
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Mail, ExternalLink, Server, Code2, Terminal, Wrench } from 'lucide-react';
+import { Mail, ExternalLink, Server, Code2, Terminal, Wrench, Zap, MapPin } from 'lucide-react';
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
 
 const COLORS = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'];
@@ -32,6 +32,7 @@ const skillIcons = {
     Backend: <Server className="h-4 w-4" />,
     DevOps: <Terminal className="h-4 w-4" />,
     Tools: <Wrench className="h-4 w-4" />,
+    Automation: <Zap className="h-4 w-4" />, 
 };
 
 const skillColors = {
@@ -100,7 +101,7 @@ export default function AboutPage() {
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center gap-2 bg-green-900/20 border border-green-800/30 text-green-400 text-sm px-4 py-1.5 rounded-full mb-6">
                         <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                        Open to junior developer roles
+                        Available for Junior Backend / DevOps roles
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                         Nathan Forest
@@ -109,7 +110,7 @@ export default function AboutPage() {
                         Junior Developer · IT Background · Full Stack
                     </p>
                     <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed text-lg">
-                        Nearly a decade in IT support taught me how technology actually works.
+                        Nearly a decade in IT support taught me how technology works.
                         Now I build it. Transitioning into software development with a production-first
                         mindset — I don't just write code, I deploy it, monitor it, and maintain it.
                     </p>
@@ -143,6 +144,10 @@ export default function AboutPage() {
                             <Mail className="h-4 w-4" />
                             nathan@forestden.dev
                         </a>
+                        <div className="flex items-center gap-2 bg-gray-900/40 border border-gray-800 text-gray-500 px-5 py-2.5 rounded-lg text-sm font-medium">
+                            <MapPin className="h-4 w-4" />
+                            Brisbane, Australia
+                        </div>
                     </div>
                 </div>
 
@@ -171,6 +176,28 @@ export default function AboutPage() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+
+                    {/* Automation — full width */}
+                    <div className={`bg-gray-900/60 border rounded-xl p-6 ${skillColors.Automation}`}>
+                        <div className="flex items-center gap-2 mb-4">
+                            {skillIcons.Automation}
+                            <h3 className="font-semibold text-sm uppercase tracking-wider">Automation</h3>
+                            <span className="ml-2 text-xs text-cyan-600 font-normal normal-case tracking-normal">
+                                Production experience from MSP & enterprise IT
+                            </span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {skills.Automation.map(skill => (
+                                <span
+                                    key={skill}
+                                    className={`text-xs px-2.5 py-1 rounded-full border ${badgeColors.Automation}`}
+                                >
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -289,8 +316,7 @@ export default function AboutPage() {
                     <p className="text-2xl text-white font-semibold mb-3">🌲</p>
                     <h2 className="text-xl font-bold text-white mb-4">The Forest Den Philosophy</h2>
                     <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                        "Do it right first time." Every application deployed here is containerised,
-                        monitored, and maintained to production standards. When I interview,
+                        "Do it right first time." Every application deployed here is containerised with Docker, monitored with real-time health checks, and maintained to production standards. When I interview,
                         I don't just show code — I show running infrastructure that recruiters
                         can interact with in real time.
                     </p>
