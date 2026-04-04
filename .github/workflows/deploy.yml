@@ -1,0 +1,26 @@
+name: Deploy CloudControl
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull latest code
+        run: |
+          cd ~/apps/cloudcontrol
+          git pull origin main
+
+      - name: Rebuild and restart container
+        run: |
+          cd ~/apps/cloudcontrol
+          docker-compose up --build -d
+
+      - name: Verify container is running
+        run: |
+          sleep 5
+          docker ps | grep cloudcontrol
