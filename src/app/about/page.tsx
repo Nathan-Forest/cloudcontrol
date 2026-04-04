@@ -25,6 +25,9 @@ const skills = {
         'VS Code', 'Postman', 'GitHub Actions (learning)',
         'PulseMonitor', 'CloudControl', 'Claude AI',
     ],
+    Automation: [
+        'PowerShell', 'Microsoft Graph API', 'Exchange Online', 'License Management',
+    ],
 };
 
 const skillIcons = {
@@ -40,6 +43,7 @@ const skillColors = {
     Backend: 'border-green-900/40 text-green-400',
     DevOps: 'border-purple-900/40 text-purple-400',
     Tools: 'border-amber-900/40 text-amber-400',
+    Automation: 'border-cyan-900/40 text-cyan-400',
 };
 
 const badgeColors = {
@@ -47,7 +51,10 @@ const badgeColors = {
     Backend: 'bg-green-900/20 border-green-800/30 text-green-300',
     DevOps: 'bg-purple-900/20 border-purple-800/30 text-purple-300',
     Tools: 'bg-amber-900/20 border-amber-800/30 text-amber-300',
+    Automation: 'bg-cyan-900/20 border-cyan-800/30 text-cyan-300',
 };
+
+const mainSkillCategories = ['Frontend', 'Backend', 'DevOps', 'Tools'] as const;
 
 const timeline = [
     {
@@ -138,11 +145,11 @@ export default function AboutPage() {
                             <ExternalLink className="h-3 w-3 opacity-50" />
                         </a>
                         <a
-                            href="mailto:nathan@forestden.dev"
+                            href="mailto:nathan@theforestden.dev"
                             className="flex items-center gap-2 bg-green-900/20 hover:bg-green-800/30 border border-green-800/30 hover:border-green-700/50 text-green-400 hover:text-green-300 px-5 py-2.5 rounded-lg text-sm font-medium transition-all"
                         >
                             <Mail className="h-4 w-4" />
-                            nathan@forestden.dev
+                            nathan@theforestden.dev
                         </a>
                         <div className="flex items-center gap-2 bg-gray-900/40 border border-gray-800 text-gray-500 px-5 py-2.5 rounded-lg text-sm font-medium">
                             <MapPin className="h-4 w-4" />
@@ -154,8 +161,10 @@ export default function AboutPage() {
                 {/* Skills */}
                 <div className="mb-16">
                     <h2 className="text-2xl font-bold text-white mb-8 text-center">Skills</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {(Object.keys(skills) as Array<keyof typeof skills>).map(category => (
+
+                    {/* 2x2 main grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        {mainSkillCategories.map(category => (
                             <div
                                 key={category}
                                 className={`bg-gray-900/60 border rounded-xl p-6 ${skillColors[category]}`}
@@ -177,7 +186,6 @@ export default function AboutPage() {
                             </div>
                         ))}
                     </div>
-                </div>
 
                     {/* Automation — full width */}
                     <div className={`bg-gray-900/60 border rounded-xl p-6 ${skillColors.Automation}`}>
@@ -200,6 +208,7 @@ export default function AboutPage() {
                         </div>
                     </div>
                 </div>
+
 
                 {/* Language Distribution */}
                 <div className="mb-16">
